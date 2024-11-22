@@ -2,14 +2,16 @@
 
 Bindings to the DOM and other Web APIs.
 
-The bindings are currently undocumented, but as the code mostly just consists of external declarations with type signatures, the code itself is fairly self-documenting. The bindings generally also correspond very well to the Web APIs they bind to, so using MDN along with GitHub should go a long way.
+The bindings are currently undocumented, but as the code mostly just consists of external declarations with type signatures, the code itself is fairly self-documenting. The bindings generally also correspond very well to the Web APIs they bind to, so using MDN along with GitHub should go a long way. If you're looking for anything to read, check out [Examples Readme](examples/README.md)
 
 ## Installation
 
 ```sh
 opam install melange-webapi
 ```
+
 Then add `melange-webapi` to the `libraries` field in your `dune` file:
+
 ```lisp
   (libraries melange-webapi)
 ```
@@ -26,7 +28,7 @@ The DOM API is mostly organized into interfaces and relies heavily on inheritanc
 
 ### Subtyping
 
-The Dom types, and the relationships between them, are actually defined in the `Dom` module that ships with Melange  ([Source code](https://github.com/melange-re/melange/blob/f954fd34e67106fc71ab64cf2bd309ace9b4d3db/jscomp/others/dom.ml)), where you'll find a bunch of types that look like this:
+The Dom types, and the relationships between them, are actually defined in the `Dom` module that ships with Melange ([Source code](https://github.com/melange-re/melange/blob/f954fd34e67106fc71ab64cf2bd309ace9b4d3db/jscomp/others/dom.ml)), where you'll find a bunch of types that look like this:
 
 ```reason
 type _element('a);
@@ -36,8 +38,8 @@ type element = element_like(_baseClass);
 
 This is subtyping implemented with abstract types and phantom arguments. The details of how this works isn't very important (but see [#23](https://github.com/reasonml-community/bs-webapi-incubator/pull/23) for a detailed explanation of how exactly this trickery works) in order to just use them, but there are a few things you should know:
 
-* If you expand the alias of a concrete DOM type, you'll discover it's actually a list of abstract types. e.g. `element` expands to `_baseClass _element _node _eventTarget_like` This means `element` is a subtype of `_element`, `_node` and `_eventTarget_like`.
-* The `_like` type are "open" (because they have a type variable). This means that a function accepting an `'a element_like` will accept any "supertype" of `element_like`. A function accepting just an `element` will only accept an `element` (Technically `element` is actually a "supertype" of `element_like` too).
+- If you expand the alias of a concrete DOM type, you'll discover it's actually a list of abstract types. e.g. `element` expands to `_baseClass _element _node _eventTarget_like` This means `element` is a subtype of `_element`, `_node` and `_eventTarget_like`.
+- The `_like` type are "open" (because they have a type variable). This means that a function accepting an `'a element_like` will accept any "supertype" of `element_like`. A function accepting just an `element` will only accept an `element` (Technically `element` is actually a "supertype" of `element_like` too).
 
 This system works exceptionally well, but has one significant flaw: It makes type errors even more complicated than they normally are. If you know what to look for it's not that bad, but unfortunately the formatting of these errors don't make looking for it any easier. We hope to improve that in other ways (see [BetterErrors](https://github.com/reasonml/BetterErrors))
 
